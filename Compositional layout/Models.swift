@@ -117,7 +117,7 @@ fileprivate func getAvatarImage()-> UIImage {
 }
 
 fileprivate func getStreamImage()-> UIImage {
-    let array = ["streamDog","streamGame","streamPainting","streamWitcher"]
+    let array = ["Dog","streamGame","streamPainting","streamWitcher"]
     let string = array.randomElement()!
     return UIImage(named: string)!
 }
