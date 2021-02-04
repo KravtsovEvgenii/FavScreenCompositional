@@ -1,40 +1,35 @@
 //
-//  OnlineCell.swift
-//  Compositional layout
-//
-//  Created by User on 31.01.2021.
-//
 
 import UIKit
 //MARK: ConfigurableCell
 protocol ConfigurableCell{
     associatedtype CellData: Equatable
     func configure(withData data: CellData)
+    static var reuseId: String {get set}
 }
 
 class OnlineCell: UICollectionViewCell,ConfigurableCell {
     //MARK: Properties
     private let streamPreview = UIImageView()
-    private let footerView: FooterView!
+    private let footerView = FooterView()
     private let viewersView = ViewersView()
     
     
-    static let reuseId = "OnlineCell"
+    static var reuseId = "OnlineCell"
     //MARK: init
     override init(frame: CGRect) {
-        footerView = FooterView()
         super.init(frame: frame)
         layout()
         layer.cornerRadius = 20
-        self.layer.cornerRadius = 4
-        self.clipsToBounds = true
+        layer.cornerRadius = 4
+        clipsToBounds = true
         
     }
     //MARK: Layout
     private func layout() {
-        self.addSubview(streamPreview)
-        self.addSubview(footerView)
-        self.addSubview(viewersView)
+        addSubview(streamPreview)
+        addSubview(footerView)
+        addSubview(viewersView)
         streamPreview.translatesAutoresizingMaskIntoConstraints = false
         footerView.translatesAutoresizingMaskIntoConstraints = false
         viewersView.translatesAutoresizingMaskIntoConstraints = false
@@ -61,7 +56,7 @@ class OnlineCell: UICollectionViewCell,ConfigurableCell {
     //MARK: Configure
     func configure(withData data: Stream) {
         footerView.configure(data)
-        self.streamPreview.image = data.image
+        streamPreview.image = data.image
     }
 }
 

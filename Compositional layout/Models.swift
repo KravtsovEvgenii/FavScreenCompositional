@@ -29,7 +29,14 @@ struct Announce {
     }
 }
 //MARK: Stream
+
 struct Stream: Hashable {
+    enum StreamState {
+        case online
+        case offline
+        case announce
+    }
+    var state: StreamState
     var id: UUID
     var title: String
     var image: UIImage?
@@ -45,12 +52,13 @@ struct Stream: Hashable {
         return lhs.id == rhs.id &&  lhs.title == rhs.title
     }
     
-    init(id: UUID? = UUID(), title: String? = "Stream Title", image: UIImage? = nil, streamer: Streamer) {
-        self.id = id!
-        self.title = title!
-        self.image = image
+    init(streamer: Streamer) {
+        id = UUID()
+        title = "Stream Title"
+        image = nil
         self.streamer = streamer
-        self.game = "Game Title"
+        game = "Game Title"
+        state = .offline
     }
 }
 //MARK: Streamer
@@ -72,28 +80,32 @@ struct AllStreams {
 //MARK: Helper Methods
 let streamerNamesArray = ["John", "TGW","Miker", "Hawk", "Foggy", "MisterWinner"]
 
- func makeStreams(count: Int)-> AllStreams {
+func makeStreams(count: Int)-> AllStreams {
     var allStreams = AllStreams()
     var overall = count
     let onlineCount = Int.random(in: 0...overall)
     overall -= onlineCount
     let offlineCount = Int.random(in: 0...overall)
     let announceCount = overall - offlineCount
-    allStreams.onlineStreams = generateStreams(count: onlineCount)
-    allStreams.offlineStreams = generateStreams(count: offlineCount)
-    allStreams.announceStreams = generateStreams(count: announceCount,announce: true)
+    allStreams.onlineStreams = generateStreams(count: onlineCount,state: .online)
+    allStreams.offlineStreams = generateStreams(count: offlineCount, state: .offline)
+    allStreams.announceStreams = generateStreams(count: announceCount,state: .announce)
     
     return allStreams
 }
 
-fileprivate func generateStreams(count: Int, announce: Bool? = false) -> [Stream] {
+fileprivate func generateStreams(count: Int, state: Stream.StreamState) -> [Stream] {
     var streams: [Stream] = []
     for _ in 0..<count {
         
         let streamer = Streamer(name: streamerNamesArray.randomElement()!, image: getAvatarImage())
         var stream = Stream(streamer: streamer)
         stream.image = getStreamImage()
-        if announce ?? false {stream.announce = generateAnnounce()}
+        
+        if state == .announce {
+            stream.announce = generateAnnounce()
+        }
+        stream.state = state
         streams.append(stream)
     }
     return streams
